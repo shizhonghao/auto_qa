@@ -1,3 +1,3 @@
 # References
 
-* YodaQA[link](http://pasky.or.cz/yodaqa-poster2015.pdf)
+* YodaQA([link](http://pasky.or.cz/yodaqa-poster2015.pdf))
