@@ -8,8 +8,12 @@ from gensim import corpora
 from gensim.similarities import Similarity
 from pprint import pprint
 
-def find_simillar(sentence):
-    pass
+# 寻找句子中前best_num的语料
+def find_simillar(sentence, best_num = 5):
+    corpus_find = dictionary.doc2bow(sentence)
+    index.num_best = best_num
+    result = index[coupus_find]
+    return result
 
 sentences = []
 with open(r"C:\Users\施中昊\Desktop\实验室\auto_qa\segmentation.txt","r") as f:
@@ -27,8 +31,5 @@ print("training done:",last_line[:-1])
     
     # try to find the most similar centence
 test_data = last_line[:-1]
-test_corpus = dictionary.doc2bow(test_data)
-index.num_best = 5
-result = index[test_corpus]
-print("find similarity")
-print(result)
+print(find_simillar(test_data))
+
