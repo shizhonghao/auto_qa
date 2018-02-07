@@ -20,20 +20,22 @@
 
 ```json
 {
-  answer:[
+  "answer" : [
     {
-      answer : "str",
-      percentage : "int"([0,100])
+      "answer" : "str",
+      "percentage" : "int"
     },
     {
-      answer : "str",
-      percentage : "int"([0,100])
+      "answer" : "str",
+      "percentage" : "int"
     },
     ...
   ]
-  cnt : "int" `number of answers`
+  "cnt" : "int" 
 }
 ```
+
+Where cnt is the number of answers and each element in the answer array is the answer received and its accuracy
 
 ## front_end
 
