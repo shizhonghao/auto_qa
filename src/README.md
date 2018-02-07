@@ -4,7 +4,7 @@
 
 * ~~After installation cd to `src\env` directory and enter `Scripts\activate` to activate virtual environment~~
 
-* ~~To exit, use `deactivate` ~~
+* ~~To exit, use `deactivate`~~
 
 * ~~How to use virtualenv ([link](http://blog.51cto.com/qicheng0211/1561685))~~
 
