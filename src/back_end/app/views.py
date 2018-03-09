@@ -15,10 +15,11 @@ def query():
     if not sentence:
         abort(400)
     result = find_answer(sentence)
+    '''
     answer = []
     for line in result:
         answer.append({"answer":line,"percentage":80})
     print(json.dumps(answer,indent=4))
-
-    return jsonify({"answer":answer,"cnt":5})
+    '''
+    return jsonify(result)
     #return jsonify(Success=True)

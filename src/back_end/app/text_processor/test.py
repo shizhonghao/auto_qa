@@ -1,5 +1,6 @@
 import jieba  # word segmentation module
-from config import *
+from app.text_processor.config import *
+#from config import *
 
 import warnings  # simply ignore the problems caused by import gensim
 
@@ -38,12 +39,22 @@ def find_answer(question):
     resultList = find_simillar(questionList, dictionary, index)
     # 将得到的答案整合到一个List中并返回
     answerList = []
+    cnt = 0
     for answer in resultList:
+        answerDic = {}
         # answerList.append(''.join(sentences[answer[0]]))
-        answerList.append(dic[''.join(sentences[answer[0]])])
+        answerDic["answer"] = dic[''.join(sentences[answer[0]])]
+        answerDic["percentage"] = (int)(answer[1]*100)
+        answerList.append(answerDic)
+        cnt = cnt + 1
+        #answerList.append(dic[''.join(sentences[answer[0]])])
         #print(dic[''.join(sentences[answer[0]])])
     print(answerList)
-    return answerList
+    reDic = {}
+    reDic["answer"] = answerList
+    reDic["cnt"] = cnt
+    print(reDic)
+    return reDic
 
 
 # 寻找句子中前best_num的语料
