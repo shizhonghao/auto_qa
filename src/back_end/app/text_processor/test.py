@@ -1,4 +1,5 @@
 import jieba  # word segmentation module
+from config import *
 
 import warnings  # simply ignore the problems caused by import gensim
 
@@ -18,13 +19,13 @@ def find_answer(question):
     print(question)
     # 建立问题和回答的字典
     dic = {}
-    with open(r"C:\\Users\施中昊\Desktop\\2017 coding\jd_scrapy\sentence.txt") as question:
-        with open(r"C:\\Users\施中昊\Desktop\\2017 coding\jd_scrapy\answer.txt") as answer:
+    with open(SENTENCE_PATH) as question:
+        with open(ANSWER_PATH) as answer:
             for q, a in zip(question, answer):
                 dic[q] = a
     # 读取已经完成分词的语料库
     sentences = []
-    with open(r"C:\Users\施中昊\Desktop\实验室\auto_qa\segmentation.txt", "r") as f:
+    with open(SEGMENTATION_PATH, "r") as f:
         for line in f:
             sentences.append(line.split(' '))
         print('input done')
