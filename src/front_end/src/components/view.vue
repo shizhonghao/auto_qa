@@ -23,14 +23,20 @@
         </el-table>
       </el-col>
     </el-row>
+    <el-row>
+      <el-button type="primary" @click="goback" plain> 返回 </el-button>
+    </el-row>
   </div>
 </template>
 
 
 <script>
   import ElCol from "element-ui/packages/col/src/col";
+  import ElRow from "element-ui/packages/row/src/row";
   export default {
-    components: {ElCol},
+    components: {
+      ElRow,
+      ElCol},
     name: 'view',
     data(){
         return {
@@ -39,6 +45,10 @@
         }
     },
     methods:{
+        goback(){
+            //this.$message.error('goback')
+            this.$router.push( '/')
+        }
 
     },
     created(){

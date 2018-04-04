@@ -21,5 +21,6 @@ def query():
         answer.append({"answer":line,"percentage":80})
     print(json.dumps(answer,indent=4))
     '''
+    print(json.dumps(result, indent=4))
     return jsonify(result)
     #return jsonify(Success=True)

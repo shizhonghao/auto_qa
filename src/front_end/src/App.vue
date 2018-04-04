@@ -6,11 +6,11 @@
 </template>
 
 <script>
-  import main from './components/main.vue'
+  import user from './components/user.vue'
 export default {
   name: 'App',
   components: {
-      main
+    user
   }
   }
 </script>
