@@ -27,6 +27,7 @@ def getSellerQA(id):
     client.close()
     return ret
 
+#add a new pair of question and answer to a particular item
 def updateQA(id,question,answer):
     qaDict = {}
     qaDict['question'] = question
@@ -42,7 +43,35 @@ def updateQA(id,question,answer):
     set.update({'item_id':id},{'$set':{'seller_qa':oldDict}})
     client.close()
 
+#add unanswered question into database
+def newQuestion(question):
+    client = pymongo.MongoClient('localhost',27017)
+    db = client["JD"]
+    set = db["new_question"]
+    set.insert({"question":question})
+    client.close()
+
+#get unanswered question from the database
+def getNewQ():
+    client = pymongo.MongoClient('localhost',27017)
+    db = client["JD"]
+    set = db["new_question"]
+    result = set.find()
+    questionList = []
+    for dict in result:
+        questionList.append(dict['question'])
+    client.close()
+    return questionList
+
+#delete the question who has been newly answered
+def delQ(question):
+    client = pymongo.MongoClient('localhost',27017)
+    db = client["JD"]
+    set = db["new_question"]
+    set.delete_one({"question":question})
+
 if __name__ == '__main__':
-    updateQA(4586850,"试试进去了么","进去了")
-    info = getSellerQA(4586850)
+    #newQuestion("test")
+    delQ('test')
+    info = getNewQ()
     print(info)
