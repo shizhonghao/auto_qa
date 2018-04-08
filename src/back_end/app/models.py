@@ -13,8 +13,8 @@ item_id = 5706771
 def getItemInfo(id):
     client = pymongo.MongoClient('localhost',27017)
     db = client["JD"]
-    set = db["item_info"]
-    info = set.find({'item_id':id})[0]
+    sheet = db["item_info"]
+    info = sheet.find({'item_id':id})[0]
     client.close()
     return info
 
@@ -22,8 +22,8 @@ def getItemInfo(id):
 def getSellerQA(id):
     client = pymongo.MongoClient('localhost', 27017)
     db = client["JD"]
-    set = db["seller_qa"]
-    ret = set.find({'item_id':id})[0]['seller_qa']
+    sheet = db["seller_qa"]
+    ret = sheet.find({'item_id':id})[0]['seller_qa']
     client.close()
     return ret
 
@@ -34,29 +34,29 @@ def updateQA(id,question,answer):
     qaDict['answer'] = answer
     client = pymongo.MongoClient('localhost', 27017)
     db = client["JD"]
-    set = db["seller_qa"]
+    sheet = db["seller_qa"]
     oldDict = []
-    oldDict = set.find({'item_id':id})[0]['seller_qa']
+    oldDict = sheet.find({'item_id':id})[0]['seller_qa']
     #print(type(oldDict))
     oldDict.append(qaDict)
     #print(oldDict)
-    set.update({'item_id':id},{'$set':{'seller_qa':oldDict}})
+    sheet.update({'item_id':id},{'$set':{'seller_qa':oldDict}})
     client.close()
 
 #add unanswered question into database
 def newQuestion(question):
     client = pymongo.MongoClient('localhost',27017)
     db = client["JD"]
-    set = db["new_question"]
-    set.insert({"question":question})
+    sheet = db["new_question"]
+    sheet.insert({"question":question})
     client.close()
 
 #get unanswered question from the database
 def getNewQ():
     client = pymongo.MongoClient('localhost',27017)
     db = client["JD"]
-    set = db["new_question"]
-    result = set.find()
+    sheet = db["new_question"]
+    result = sheet.find()
     questionList = []
     for dict in result:
         questionList.append(dict['question'])
@@ -67,11 +67,13 @@ def getNewQ():
 def delQ(question):
     client = pymongo.MongoClient('localhost',27017)
     db = client["JD"]
-    set = db["new_question"]
-    set.delete_one({"question":question})
+    sheet = db["new_question"]
+    #sheet.remove({"question":question},{"justOne":True})
+    sheet.delete_one({"question":question})
+    client.close()
 
 if __name__ == '__main__':
-    #newQuestion("test")
-    delQ('test')
+    newQuestion("test")
+    #delQ('test')
     info = getNewQ()
     print(info)
