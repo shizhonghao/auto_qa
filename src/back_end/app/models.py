@@ -3,18 +3,19 @@ import jieba
 from gensim.models import Word2Vec
 from pprint import pprint
 
-item_id = 5706771
+#5706771 4586850
+item_id = 4835534
 
 #info = collection.find({'item_id': item_id})[0]["item_info"]
 
-#model = Word2Vec.load("app/text_processor/wordvec.model")
+model = Word2Vec.load("app/text_processor/wordvec.model")
 
 #get the information of a particular item whose id is id
 def getItemInfo(id):
     client = pymongo.MongoClient('localhost',27017)
     db = client["JD"]
     sheet = db["item_info"]
-    info = sheet.find({'item_id':id})[0]
+    info = sheet.find({'item_id':id})[0]["item_info"]
     client.close()
     return info
 
@@ -24,8 +25,13 @@ def getSellerQA(id):
     db = client["JD"]
     sheet = db["seller_qa"]
     ret = sheet.find({'item_id':id})[0]['seller_qa']
+    qList = []
+    aList = []
+    for dict in ret:
+        qList.append(dict['question'])
+        aList.append(dict['answer'])
     client.close()
-    return ret
+    return qList,aList
 
 #add a new pair of question and answer to a particular item
 def updateQA(id,question,answer):
@@ -59,7 +65,9 @@ def getNewQ():
     result = sheet.find()
     questionList = []
     for dict in result:
-        questionList.append(dict['question'])
+        questionDict = {}
+        questionDict['question'] = dict['question']
+        questionList.append(questionDict)
     client.close()
     return questionList
 

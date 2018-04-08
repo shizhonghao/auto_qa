@@ -2,6 +2,8 @@ import jieba  # word segmentation module
 from app.text_processor.config import *
 #from config import *
 from app.models import *
+import win_unicode_console
+win_unicode_console.enable()
 
 import warnings  # simply ignore the problems caused by import gensim
 warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
@@ -13,11 +15,13 @@ from pprint import pprint
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn import svm
 
+#"C:/Users/施中昊/Desktop/实验室/auto_qa/test/similarity_out.txt"
+
 # 判断问题是否可以用知识库数据解决,
 # 输入用空格分隔的分词后的问题字符串
 # 返回为int[0,1]：0（非KB_QA），1（可以用结构化信息回答）
 def is_KB_QA(question):
-    with open("C:/Users/施中昊/Desktop/实验室/auto_qa/test/similarity_out.txt", "r") as f:
+    with open(CLARIFICATION_TRAIN, "r") as f:
         clf = svm.SVC(kernel='linear')
         sentence = []
         lable = []
@@ -123,16 +127,18 @@ def find_answer(question):
         print("Is not KB QA:")
         # 建立问题和回答的字典
         dic = {}
-        with open(SENTENCE_PATH, "r", encoding="utf-8") as question:
-            with open(ANSWER_PATH, "r", encoding="utf-8") as answer:
-                for q, a in zip(question, answer):
-                    dic[q] = a
+        question,answer = getSellerQA(item_id)
+        #with open(SENTENCE_PATH, "r", encoding="utf-8") as question:
+        #    with open(ANSWER_PATH, "r", encoding="utf-8") as answer:
+        for q, a in zip(question, answer):
+            dic[q] = a
         # 读取已经完成分词的语料库
         sentences = []
-        with open(SEGMENTATION_PATH, "r", encoding="utf-8") as f:
-            for line in f:
-                sentences.append(line.split(' '))
-            print('input done')
+        for line in question:
+            line.replace('\t', '').replace(' ', '')  # .replace('\n', '')
+            seg_list = jieba.cut(line)
+            sentences.append(list(seg_list))
+        print('input done')
         # 生成字典和向量语料
         #pprint(sentences)
         dictionary = corpora.Dictionary(sentences)
@@ -150,7 +156,7 @@ def find_answer(question):
             answerList.append(answerDic)
             #answerList.append(dic[''.join(sentences[answer[0]])])
             #print(dic[''.join(sentences[answer[0]])])
-    print(resultList)
+        print(resultList)
     reDic = {}
     reDic["answer"] = answerList
     reDic["cnt"] = len(answerList)
@@ -167,13 +173,16 @@ def find_simillar(sentence, dictionary, index, best_num=5):
 
 # 获取未作答的问题数列表
 def get_questions():
-    question_list = [{"question":"问题1"},{"question":"问题2"}]
+    question_list = getNewQ()
+    #question_list = [{"question":"问题1"},{"question":"问题2"}]
     print("in get_question")
-    return {"question_list":question_list, "question_cnt":2}
+    return {"question_list":question_list, "question_cnt":len(question_list)}
 
 # 将作出的回答写入数据库中
 def add_QA_pairs(question, answer):
     print(question, answer)
+    updateQA(item_id,question,answer)
+    delQ(question)
     pass
 
 '''
