@@ -1,10 +1,9 @@
 import jieba  # word segmentation module
 from app.text_processor.config import *
 #from config import *
-from app.models import info, model
+from app.models import *
 
 import warnings  # simply ignore the problems caused by import gensim
-
 warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
 
 # import gensim.models.word2vec as w2v
@@ -18,7 +17,7 @@ from sklearn import svm
 # 输入用空格分隔的分词后的问题字符串
 # 返回为int[0,1]：0（非KB_QA），1（可以用结构化信息回答）
 def is_KB_QA(question):
-    with open("C:/Users/施中昊/Desktop/实验室/auto_qa/similarity_out.txt", "r") as f:
+    with open("C:/Users/施中昊/Desktop/实验室/auto_qa/test/similarity_out.txt", "r") as f:
         clf = svm.SVC(kernel='linear')
         sentence = []
         lable = []
@@ -82,6 +81,7 @@ def phrase_similarity(sentence, phrase):
 # 每条为一个4元组（匹配得分，参数分类，参数名称，参数内容）
 def KB_answer(question):
     calc_list = []
+    info = getItemInfo(item_id)
     for key_1 in info:
         group_label = list(jieba.cut(key_1))
         for key_2 in info[key_1]:
@@ -129,17 +129,18 @@ def find_answer(question):
                     dic[q] = a
         # 读取已经完成分词的语料库
         sentences = []
-        with open(SEGMENTATION_PATH, "r") as f:
+        with open(SEGMENTATION_PATH, "r", encoding="utf-8") as f:
             for line in f:
                 sentences.append(line.split(' '))
             print('input done')
         # 生成字典和向量语料
+        #pprint(sentences)
         dictionary = corpora.Dictionary(sentences)
         corpus = [dictionary.doc2bow(text) for text in sentences]
         index = Similarity('-Similarity-index', corpus, num_features=400)
-        print("training done:", questionList)
+        print("training done:", list(question_gen))
         # 找到与提出的问题最相似的已有问题
-        resultList = find_simillar(question_gen, dictionary, index)
+        resultList = find_simillar(questionList, dictionary, index)
         # 将得到的答案整合到一个List中并返回
         for answer in resultList:
             answerDic = {}
@@ -149,7 +150,7 @@ def find_answer(question):
             answerList.append(answerDic)
             #answerList.append(dic[''.join(sentences[answer[0]])])
             #print(dic[''.join(sentences[answer[0]])])
-    print(answerList)
+    print(resultList)
     reDic = {}
     reDic["answer"] = answerList
     reDic["cnt"] = len(answerList)
@@ -164,6 +165,16 @@ def find_simillar(sentence, dictionary, index, best_num=5):
     result = index[corpus_find]
     return result
 
+# 获取未作答的问题数列表
+def get_questions():
+    question_list = [{"question":"问题1"},{"question":"问题2"}]
+    print("in get_question")
+    return {"question_list":question_list, "question_cnt":2}
+
+# 将作出的回答写入数据库中
+def add_QA_pairs(question, answer):
+    print(question, answer)
+    pass
 
 '''
 sentences = []

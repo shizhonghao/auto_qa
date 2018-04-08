@@ -16,13 +16,13 @@ def find_answer(question):
     print(question)
     #建立问题和回答的字典
     dic = {}
-    with open(r"F:\programme\python\jd_scrapy\jd_scrapy\sentence.txt") as question:
-        with open(r"F:\programme\python\jd_scrapy\jd_scrapy\answer.txt") as answer:
+    with open(r"C:\\Users\施中昊\Desktop\\2017 coding\jd_scrapy\sentence.txt", "r", encoding="utf-8") as question:
+        with open(r"C:\\Users\施中昊\Desktop\\2017 coding\jd_scrapy\answer.txt", "r", encoding="utf-8") as answer:
             for q,a in zip(question,answer):
                 dic[q] = a
     #读取已经完成分词的语料库
     sentences = []
-    with open(r"F:\programme\python\auto_qa\segmentation.txt","r") as f:
+    with open(r"C:\Users\施中昊\Desktop\实验室\auto_qa\test\segmentation.txt", "r", encoding="utf-8") as f:
         for line in f:
             sentences.append(line.split(' '))
         print('input done')
@@ -38,8 +38,8 @@ def find_answer(question):
     for answer in resultList:
         #answerList.append(''.join(sentences[answer[0]]))
         answerList.append(dic[''.join(sentences[answer[0]])])
-        print(dic[''.join(sentences[answer[0]])])
-    print(answerList)
+        print(''.join(sentences[answer[0]]), dic[''.join(sentences[answer[0]])])
+    print(resultList)
     return answerList
 
 # 寻找句子中前best_num的语料
@@ -73,4 +73,4 @@ for linNum in result:
     print(''.join(sentences[linNum[0]]),linNum[1])
 '''
 if __name__ == '__main__':
-    find_answer("什么叫双卡双待单通？可以同时插移动和联通的卡，用联通的卡上网吗？")
+    find_answer("手机是全网通么？")
