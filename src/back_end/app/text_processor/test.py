@@ -1,7 +1,7 @@
 import jieba  # word segmentation module
-from app.text_processor.config import *
-#from config import *
-from app.models import *
+#from app.text_processor.config import *
+from config import *
+#from app.models import *
 import win_unicode_console
 win_unicode_console.enable()
 
@@ -14,6 +14,9 @@ from gensim.similarities import Similarity
 from pprint import pprint
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn import svm
+from sklearn.multiclass import OneVsRestClassifier
+from sklearn.preprocessing import label_binarize
+from numpy import argmax
 
 #"C:/Users/施中昊/Desktop/实验室/auto_qa/test/similarity_out.txt"
 
@@ -53,6 +56,32 @@ def is_KB_QA(question):
         result = clf.predict(tfidf_test)
         print(result)
         return result[0]
+
+# 利用svm实现的多分类函数
+def classify(question):
+    model = OneVsRestClassifier(svm.SVC(kernel='linear'))
+    with open(CLARIFICATION_TRAIN, "r") as f:
+        sentence = []
+        lable = []
+        for line in f:
+            # line = line.split()
+            lable.append(int(line[0]))
+            questionList = jieba.cut(line[2:-1])
+            question_seg = " ".join(questionList)
+            sentence.append(question_seg)
+    wordCount = CountVectorizer()
+    wordCntList = wordCount.fit_transform(sentence)
+    label = label_binarize(lable,classes=list(range(3)))
+    tfidfTrans = TfidfTransformer()
+    tfidf_x = tfidfTrans.fit(wordCntList).transform(wordCntList)
+    clf = model.fit(tfidf_x,label)
+    qWordCount = CountVectorizer(vocabulary=wordCount.vocabulary_)
+    qList = jieba.cut(question)
+    qSeg = " ".join(qList)
+    qCntList = qWordCount.fit_transform([qSeg])
+    tfidf_q = tfidfTrans.fit(qCntList).transform(qCntList)
+    types = argmax(clf.decision_function(tfidf_q),axis=1)[0]
+    return types
 
 # 比较一个短语与句子的匹配程度
 # 短语比重从高到底排序后用反比例函数在i处的值确定
@@ -209,4 +238,6 @@ for linNum in result:
     print(''.join(sentences[linNum[0]]),linNum[1])
 '''
 if __name__ == '__main__':
-    find_answer("什么叫双卡双待单通？可以同时插移动和联通的卡，用联通的卡上网吗？")
+    #find_answer("什么叫双卡双待单通？可以同时插移动和联通的卡，用联通的卡上网吗？")
+    #is_KB_QA("什么叫双卡双待单通？可以同时插移动和联通的卡，用联通的卡上网吗？")
+    print(classify("什么叫双卡双待单通？可以同时插移动和联通的卡，用联通的卡上网吗？"))
